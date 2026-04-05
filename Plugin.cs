@@ -1,10 +1,9 @@
+using System.IO;
+using System.Timers;
 using BepInEx;
 using BepInEx.Configuration;
 using Common;
 using HarmonyLib;
-using System.IO;
-using System.Timers;
-using BepInEx.Logging;
 
 namespace SaS2IndicatorsColorChanger;
 
@@ -30,17 +29,17 @@ public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
         // Main player marker color config
         _mainPlayerColorConfig = Config.Bind(
             "Colors",
-            "MainPlayerMarkerColor",
-            "0.4,0.5,1,1",
-            "Color for the main player marker (R,G,B,A) each in range 0-1."
+            "Main Player Color",
+            "255,128,102,1",
+            "Color for the main player marker (R,G,B in 0-255, A in 0-1)."
         );
 
         // Coop player marker color config
         _coopPlayerColorConfig = Config.Bind(
             "Colors",
-            "CoopPlayerMarkerColor",
-            "1,0.5,0.4,1",
-            "Color for the coop player marker (R,G,B,A) each in range 0-1."
+            "Cooperator Color",
+            "102,128,255,1",
+            "Color for the coop player marker (R,G,B in 0-255, A in 0-1)."
         );
 
         // Initial parse
@@ -61,7 +60,7 @@ public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
             _configWatcher.Changed += OnConfigFileChanged;
 
             // Debounce timer to avoid multiple rapid events
-            _debounceTimer = new Timer(500) { AutoReset = false };
+            _debounceTimer = new Timer(1000) { AutoReset = false };
             _debounceTimer.Elapsed += (_, _) =>
             {
                 // Reload the config file and update colors
@@ -89,7 +88,7 @@ public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
 
     private void UpdateColorsFromConfig()
     {
-        // Parse main player color
+        // Parse main player color (RGB 0-255, A 0-1)
         var mainParts = _mainPlayerColorConfig.Value.Split(',');
         if (mainParts.Length == 4 &&
             float.TryParse(mainParts[0], out var rMain) &&
@@ -97,7 +96,8 @@ public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
             float.TryParse(mainParts[2], out var bMain) &&
             float.TryParse(mainParts[3], out var aMain))
         {
-            MainPlayerMarkerColor = new Color(rMain, gMain, bMain, aMain);
+            // Convert RGB from 0-255 to 0-1
+            MainPlayerMarkerColor = new Color(rMain / 255f, gMain / 255f, bMain / 255f, aMain);
             Log.LogInfo($"MainPlayerMarkerColor updated to: R={rMain} G={gMain} B={bMain} A={aMain}");
         }
         else
@@ -113,7 +113,7 @@ public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
             float.TryParse(coopParts[2], out var bCoop) &&
             float.TryParse(coopParts[3], out var aCoop))
         {
-            CoopPlayerMarkerColor = new Color(rCoop, gCoop, bCoop, aCoop);
+            CoopPlayerMarkerColor = new Color(rCoop / 255f, gCoop / 255f, bCoop / 255f, aCoop);
             Log.LogInfo($"CoopPlayerMarkerColor updated to: R={rCoop} G={gCoop} B={bCoop} A={aCoop}");
         }
         else

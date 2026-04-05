@@ -14,25 +14,25 @@ using ProjectMage.player.menu;
 namespace SaS2IndicatorsColorChanger;
 
 [HarmonyPatch]
-internal class Player
+internal class PlayerMarker
 {
     private static readonly MethodInfo GetCharacterMethod;
     private static readonly MethodInfo GetMainPlayerMethod;
 
-    static Player()
+    static PlayerMarker()
     {
-        GetCharacterMethod = typeof(ProjectMage.player.Player).GetMethod("GetCharacter", BindingFlags.NonPublic | BindingFlags.Instance);
+        GetCharacterMethod = typeof(Player).GetMethod("GetCharacter", BindingFlags.NonPublic | BindingFlags.Instance);
         GetMainPlayerMethod = typeof(PlayerMgr).GetMethod("GetMainPlayer", BindingFlags.NonPublic | BindingFlags.Static);
     }
 
-    private static Character GetCharacter(ProjectMage.player.Player player)
+    private static Character GetCharacter(Player player)
     {
         return (Character)GetCharacterMethod.Invoke(player, null);
     }
 
-    private static ProjectMage.player.Player GetMainPlayer()
+    private static Player GetMainPlayer()
     {
-        return (ProjectMage.player.Player)GetMainPlayerMethod.Invoke(null, null);
+        return (Player)GetMainPlayerMethod.Invoke(null, null);
     }
 
     [HarmonyPrefix]
