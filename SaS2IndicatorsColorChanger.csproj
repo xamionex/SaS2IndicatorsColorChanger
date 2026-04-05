@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net452</TargetFramework>
-    <AssemblyName>amione.SaSReverseColorMarker</AssemblyName>
-    <Product>SaSReverseColorMarker</Product>
+    <AssemblyName>amione.SaS2IndicatorsColorChanger</AssemblyName>
+    <Product>SaS2IndicatorsColorChanger</Product>
     <ProductDescription>pt.rs BepInEx Plugin Template!</ProductDescription>
     <Version>1.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -13,7 +13,7 @@
       https://nuget.bepinex.dev/v3/index.json;
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
-    <RootNamespace>SaSReverseColorMarker</RootNamespace>
+    <RootNamespace>SaS2IndicatorsColorChanger</RootNamespace>
     <DebugType>embedded</DebugType>
   </PropertyGroup>
 
@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="SaSReverseColorMarker\manifest.json" />
+    <None Remove="SaS2IndicatorsColorChanger\manifest.json" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
@@ -94,8 +94,8 @@
   </Target>
 
   <Target Name="ZipProjectDirectory" AfterTargets="Build">
-    <Exec Command="cd $(RootNamespace)/plugins &amp;&amp; zip ../../$(RootNamespace).zip amione.SaSReverseColorMarker.dll" Condition="'$(OS)' == 'Unix'" />
-    <Exec Command="powershell -Command &quot;Compress-Archive -Path '$(ProjectDir)$(RootNamespace)\plugins\amione.SaSReverseColorMarker.dll' -DestinationPath '$(ProjectDir)$(RootNamespace).zip' -Force&quot;" Condition="'$(OS)' == 'Windows_NT'" />
+    <Exec Command="cd $(RootNamespace)/plugins &amp;&amp; zip ../../$(RootNamespace).zip amione.SaS2IndicatorsColorChanger.dll" Condition="'$(OS)' == 'Unix'" />
+    <Exec Command="powershell -Command &quot;Compress-Archive -Path '$(ProjectDir)$(RootNamespace)\plugins\amione.SaS2IndicatorsColorChanger.dll' -DestinationPath '$(ProjectDir)$(RootNamespace).zip' -Force&quot;" Condition="'$(OS)' == 'Windows_NT'" />
   </Target>
 
 
@@ -103,7 +103,7 @@
     <!-- Set variables for game game file and plugin source -->
     <PropertyGroup>
       <GameLocationFile>$(MSBuildProjectDirectory)/.gamelocation</GameLocationFile>
-      <PluginSource>$(MSBuildProjectDirectory)/SaSReverseColorMarker/plugins/amione.SaSReverseColorMarker.dll</PluginSource>
+      <PluginSource>$(MSBuildProjectDirectory)/SaS2IndicatorsColorChanger/plugins/amione.SaS2IndicatorsColorChanger.dll</PluginSource>
     </PropertyGroup>
 
     <!-- Read .gamelocation file if exists -->
@@ -122,14 +122,14 @@
     <!-- 🪟 Windows -->
     <Exec Condition="'$(OS)' == 'Windows_NT' And '$(GamePath)' != ''" Command='
     setlocal EnableDelayedExpansion &amp;&amp;
-    set "TargetPath=$(GamePath)\BepInEx\plugins\SaSReverseColorMarker" &amp;&amp;
+    set "TargetPath=$(GamePath)\BepInEx\plugins\SaS2IndicatorsColorChanger" &amp;&amp;
     if exist "!TargetPath!" rmdir /s /q "!TargetPath!" &amp;&amp;
     xcopy /s /e /y "$(PluginSource)" "!TargetPath!"
   '/>
 
     <!-- 🐧 Linux/macOS -->
     <Exec Condition="'$(OS)' != 'Windows_NT' And '$(GamePath)' != ''" Command='
-    TargetPath="$(GamePath)/BepInEx/plugins/SaSReverseColorMarker" &amp;&amp;
+    TargetPath="$(GamePath)/BepInEx/plugins/SaS2IndicatorsColorChanger" &amp;&amp;
     rm -rf "$TargetPath" &amp;&amp;
     mkdir -p "$TargetPath" &amp;&amp;
     cp -r "$(PluginSource)" "$TargetPath"

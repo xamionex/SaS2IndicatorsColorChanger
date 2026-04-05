@@ -11,7 +11,7 @@ using ProjectMage.gamestate.outro;
 using ProjectMage.player;
 using ProjectMage.player.menu;
 
-namespace SaSReverseColorMarker;
+namespace SaS2IndicatorsColorChanger;
 
 [HarmonyPatch]
 internal class MainLogic

@@ -5,7 +5,7 @@ using HarmonyLib;
 using System.IO;
 using System.Timers;
 
-namespace SaSReverseColorMarker;
+namespace SaS2IndicatorsColorChanger;
 
 [BepInPlugin(PluginInfo.PluginGuid, PluginInfo.PluginName, PluginInfo.PluginVersion)]
 public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
