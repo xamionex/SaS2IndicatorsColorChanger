@@ -14,25 +14,25 @@ using ProjectMage.player.menu;
 namespace SaS2IndicatorsColorChanger;
 
 [HarmonyPatch]
-internal class MainLogic
+internal class Player
 {
-    private static MethodInfo getCharacterMethod;
-    private static MethodInfo getMainPlayerMethod;
+    private static readonly MethodInfo GetCharacterMethod;
+    private static readonly MethodInfo GetMainPlayerMethod;
 
-    static MainLogic()
+    static Player()
     {
-        getCharacterMethod = typeof(Player).GetMethod("GetCharacter", BindingFlags.NonPublic | BindingFlags.Instance);
-        getMainPlayerMethod = typeof(PlayerMgr).GetMethod("GetMainPlayer", BindingFlags.NonPublic | BindingFlags.Static);
+        GetCharacterMethod = typeof(ProjectMage.player.Player).GetMethod("GetCharacter", BindingFlags.NonPublic | BindingFlags.Instance);
+        GetMainPlayerMethod = typeof(PlayerMgr).GetMethod("GetMainPlayer", BindingFlags.NonPublic | BindingFlags.Static);
     }
 
-    private static Character GetCharacter(Player player)
+    private static Character GetCharacter(ProjectMage.player.Player player)
     {
-        return (Character)getCharacterMethod.Invoke(player, null);
+        return (Character)GetCharacterMethod.Invoke(player, null);
     }
 
-    private static Player GetMainPlayer()
+    private static ProjectMage.player.Player GetMainPlayer()
     {
-        return (Player)getMainPlayerMethod.Invoke(null, null);
+        return (ProjectMage.player.Player)GetMainPlayerMethod.Invoke(null, null);
     }
 
     [HarmonyPrefix]
@@ -45,25 +45,23 @@ internal class MainLogic
             return false;
         }
 
-        bool isCoopPlayer = __instance.player != GetMainPlayer();
+        var isCoopPlayer = __instance.player != GetMainPlayer();
         float num = Game1.Instance.GraphicsDevice.Viewport.Width;
         float num2 = Game1.Instance.GraphicsDevice.Viewport.Height;
-        Vector2 vector = new Vector2(num, num2);
-        Character character = GetCharacter(__instance.player);
-        Vector2 vector2 = num2 / ScrollManager.screenSize.Y *
-                          ScrollManager.GetScreenLoc(character.loc + new Vector2(0f, -70f), 0);
-        float num3 = (float)(120.0 * (num2 / 1080.0));
-        float num4 = num3;
-        float num5 = num - num3;
-        float num6 = num3;
-        float num7 = num2 - num3;
-        if (vector2.X > (double)num5 || vector2.X < (double)num4 || vector2.Y > (double)num7 ||
-            vector2.Y < (double)num6)
+        var vector = new Vector2(num, num2);
+        var character = GetCharacter(__instance.player);
+        var vector2 = num2 / ScrollManager.screenSize.Y *
+                      ScrollManager.GetScreenLoc(character.loc + new Vector2(0f, -70f), 0);
+        var num3 = (float)(120.0 * (num2 / 1080.0));
+        var num5 = num - num3;
+        var num7 = num2 - num3;
+        if (vector2.X > (double)num5 || vector2.X < (double)num3 || vector2.Y > (double)num7 ||
+            vector2.Y < (double)num3)
         {
-            float angle = Trig.GetAngle(vector2, vector / 2f);
-            Vector2 vector3 = vector2 - vector / 2f;
-            float num8 = num / 2f - num3;
-            float num9 = num2 / 2f - num3;
+            var angle = Trig.GetAngle(vector2, vector / 2f);
+            var vector3 = vector2 - vector / 2f;
+            var num8 = num / 2f - num3;
+            var num9 = num2 / 2f - num3;
             if (vector3.X > (double)num8)
             {
                 vector3 *= num8 / vector3.X;
@@ -85,7 +83,7 @@ internal class MainLogic
             }
 
             // Use config colors
-            Color markerColor = isCoopPlayer ? Plugin.CoopPlayerMarkerColor : Plugin.MainPlayerMarkerColor;
+            var markerColor = isCoopPlayer ? Plugin.CoopPlayerMarkerColor : Plugin.MainPlayerMarkerColor;
             SpriteTools.sprite.Draw(UIRender.interfaceTex, vector / 2f + vector3,
                 new Rectangle(128, 512, 64, 64),
                 markerColor, angle,
@@ -104,7 +102,7 @@ internal class MainLogic
         }
 
         // On-screen marker: same color logic
-        Color markerColorOnScreen = isCoopPlayer ? Plugin.CoopPlayerMarkerColor : Plugin.MainPlayerMarkerColor;
+        var markerColorOnScreen = isCoopPlayer ? Plugin.CoopPlayerMarkerColor : Plugin.MainPlayerMarkerColor;
         SpriteTools.sprite.Draw(UIRender.interfaceTex,
             num2 / ScrollManager.screenSize.Y *
             ScrollManager.GetScreenLoc(__instance.player.markerDrawLoc + new Vector2(0f, -140f), 0),
