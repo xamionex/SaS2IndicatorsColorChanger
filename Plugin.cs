@@ -27,7 +27,7 @@ public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
         mainPlayerColorConfig = Config.Bind(
             "Colors",
             "MainPlayerMarkerColor",
-            "1,0.5,0.4,1",
+            "0.4,0.5,1,1",
             "Color for the main player marker (R,G,B,A) each in range 0-1."
         );
 
@@ -35,7 +35,7 @@ public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
         coopPlayerColorConfig = Config.Bind(
             "Colors",
             "CoopPlayerMarkerColor",
-            "0.4,0.5,1,1",
+            "1,0.5,0.4,1",
             "Color for the coop player marker (R,G,B,A) each in range 0-1."
         );
 
