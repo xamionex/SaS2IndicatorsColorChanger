@@ -19,12 +19,12 @@ public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
 
     private FileSystemWatcher _configWatcher;
     private Timer _debounceTimer;
-    public static Plugin Main;
+    public static Plugin Instance;
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoOptimization | System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
     public override void Load()
     {
-        Main = this;
+        Instance = this;
 
         // Main player marker color config
         _mainPlayerColorConfig = Config.Bind(
