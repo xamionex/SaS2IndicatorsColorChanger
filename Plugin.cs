@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Timers;
 using BepInEx;
 using BepInEx.Configuration;
@@ -8,6 +10,7 @@ using HarmonyLib;
 namespace SaS2IndicatorsColorChanger;
 
 [BepInPlugin(PluginInfo.PluginGuid, PluginInfo.PluginName, PluginInfo.PluginVersion)]
+[BepInDependency("amione.SaS2ModOptions", BepInDependency.DependencyFlags.SoftDependency)]
 public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
 {
     // Static properties to hold marker colors (readable from other classes)
@@ -44,6 +47,17 @@ public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
 
         // Initial parse
         UpdateColorsFromConfig();
+        
+        var modOptionsType = Type.GetType("SaS2ModOptions.SaS2ModOptions, amione.SaS2ModOptions");
+        if (modOptionsType != null)
+        {
+            TryRegisterModOptions();
+            Instance.Log.LogInfo("Successfully registered configs with SaS2ModOptions.");
+        }
+        else
+        {
+            Instance.Log.LogInfo("Mod Options not installed; config file only.");
+        }
 
         // Setup file watcher to detect external changes to the config file
         var configFilePath = Config.ConfigFilePath;
@@ -120,6 +134,13 @@ public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
         {
             Log.LogWarning($"Failed to parse CoopPlayerMarkerColor config value '{_coopPlayerColorConfig.Value}'. Keeping previous color.");
         }
+    }
+    
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private void TryRegisterModOptions()
+    {
+        SaS2ModOptions.SaS2ModOptions.RegisterConfig(_mainPlayerColorConfig, "Indicators", "Main Player (RGBA String)", "Format: R,G,B,A (0-255 for RGB, 0-1 for A)");
+        SaS2ModOptions.SaS2ModOptions.RegisterConfig(_coopPlayerColorConfig, "Indicators", "Cooperator (RGBA String)", "Format: R,G,B,A (0-255 for RGB, 0-1 for A)");
     }
 
     public override bool Unload()
