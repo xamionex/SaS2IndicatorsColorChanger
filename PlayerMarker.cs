@@ -37,6 +37,7 @@ internal class PlayerMarker
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(PlayerMenu), "DrawCoopMarker")]
+    // ReSharper disable once InconsistentNaming
     public static bool DrawCoopMarkerPrefix(PlayerMenu __instance, float scale)
     {
         if (GameState.state != 1 || (IntroManager.active && IntroManager.phase < 2) || ArenaStateMgr.active ||

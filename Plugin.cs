@@ -10,21 +10,24 @@ using HarmonyLib;
 namespace SaS2IndicatorsColorChanger;
 
 [BepInPlugin(PluginInfo.PluginGuid, PluginInfo.PluginName, PluginInfo.PluginVersion)]
+// ReSharper disable once StringLiteralTypo
 [BepInDependency("amione.SaS2ModOptions", BepInDependency.DependencyFlags.SoftDependency)]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
 {
     // Static properties to hold marker colors (readable from other classes)
-    public static Color MainPlayerMarkerColor { get; private set; } = new Color(1f, 0.5f, 0.4f, 1f);   // default orange
-    public static Color CoopPlayerMarkerColor { get; private set; } = new Color(0.4f, 0.5f, 1f, 1f); // default blue
+    public static Color MainPlayerMarkerColor { get; private set; } = new(1f, 0.5f, 0.4f, 1f);   // default orange
+    public static Color CoopPlayerMarkerColor { get; private set; } = new(0.4f, 0.5f, 1f, 1f); // default blue
 
     private ConfigEntry<string> _mainPlayerColorConfig;
     private ConfigEntry<string> _coopPlayerColorConfig;
 
     private FileSystemWatcher _configWatcher;
     private Timer _debounceTimer;
+    // ReSharper disable once MemberCanBePrivate.Global
     public static Plugin Instance;
 
-    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoOptimization | System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+    [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
     public override void Load()
     {
         Instance = this;
@@ -139,8 +142,11 @@ public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
     [MethodImpl(MethodImplOptions.NoInlining)]
     private void TryRegisterModOptions()
     {
-        SaS2ModOptions.SaS2ModOptions.RegisterConfig(_mainPlayerColorConfig, "Indicators", "Main Player (RGBA String)", "Format: R,G,B,A (0-255 for RGB, 0-1 for A)");
-        SaS2ModOptions.SaS2ModOptions.RegisterConfig(_coopPlayerColorConfig, "Indicators", "Cooperator (RGBA String)", "Format: R,G,B,A (0-255 for RGB, 0-1 for A)");
+        // ReSharper disable RedundantAssignment
+        var order = 0;
+        SaS2ModOptions.SaS2ModOptions.RegisterConfig(_mainPlayerColorConfig, "Indicators", "Main Player (RGBA String)", order += 1);
+        SaS2ModOptions.SaS2ModOptions.RegisterConfig(_coopPlayerColorConfig, "Indicators", "Cooperator (RGBA String)", order += 1);
+        // ReSharper restore RedundantAssignment
     }
 
     public override bool Unload()

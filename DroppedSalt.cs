@@ -28,6 +28,7 @@ internal static class DroppedSalt
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(PlayerStats), "DrawXPPile")]
+    // ReSharper disable once InconsistentNaming
     public static bool DrawXpPilePatch(PlayerStats __instance)
     {
         if (__instance.droppedXPArea != GameSessionMgr.gameSession.currentArea)
