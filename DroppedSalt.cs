@@ -111,45 +111,20 @@ internal static class DroppedSalt
         var codes = new List<CodeInstruction>(instructions);
         int localR = -1, localG = -1, localB = -1;
 
-        //Plugin.Instance?.Log.LogInfo($"[XpWispDrawTranspiler] Starting, total IL instructions: {codes.Count}");
-
-        // Dump all IL so we can see the real constants if the scan fails again
-        //for (var d = 0; d < codes.Count; d++)
-            //Plugin.Instance?.Log.LogInfo($"[XpWispDrawTranspiler] IL[{d:000}]: {codes[d].opcode} {codes[d].operand}");
-
-        // Try multiple patterns — the old code assumed 0.5/0.6/1.0 but the game actually
-        // uses 0.4/0.5/1.0 for main player (confirmed from decompiled DrawXPPile).
-        var patterns = new[]
+        for (var i = 0; i < codes.Count - 5; i++)
         {
-            new[] { 0.4f, 0.5f, 1.0f },  // matches DrawXPPile main-player colors
-            new[] { 0.5f, 0.6f, 1.0f },  // original assumption (kept as fallback)
-        };
+            const float tolerance = 0.01f;
+            if (codes[i].opcode != OpCodes.Ldc_R4 || !(Math.Abs((float)codes[i].operand - 0.4f) < tolerance) ||
+                codes[i + 2].opcode != OpCodes.Ldc_R4 || !(Math.Abs((float)codes[i + 2].operand - 0.5f) < tolerance) ||
+                codes[i + 4].opcode != OpCodes.Ldc_R4 || !(Math.Abs((float)codes[i + 4].operand - 1.0f) < tolerance))
+                continue;
 
-        foreach (var pattern in patterns)
-        {
-            for (var i = 0; i < codes.Count - 5; i++)
-            {
-                const float tolerance = 0.01f;
-                if (codes[i].opcode != OpCodes.Ldc_R4 || !(Math.Abs((float)codes[i].operand - pattern[0]) < tolerance) ||
-                    codes[i + 2].opcode != OpCodes.Ldc_R4 || !(Math.Abs((float)codes[i + 2].operand - pattern[1]) < tolerance) ||
-                    codes[i + 4].opcode != OpCodes.Ldc_R4 || !(Math.Abs((float)codes[i + 4].operand - pattern[2]) < tolerance))
-                    continue;
-
-                localR = GetIdx(codes[i + 1]);
-                localG = GetIdx(codes[i + 3]);
-                localB = GetIdx(codes[i + 5]);
-                //Plugin.Instance?.Log.LogInfo($"[XpWispDrawTranspiler] FOUND pattern ({pattern[0]},{pattern[1]},{pattern[2]}) at i={i}: localR={localR}, localG={localG}, localB={localB}");
-                break;
-            }
-
-            if (localR != -1) break;
-            //Plugin.Instance?.Log.LogWarning($"[XpWispDrawTranspiler] Pattern ({pattern[0]},{pattern[1]},{pattern[2]}) NOT found");
+            localR = GetIdx(codes[i + 1]);
+            localG = GetIdx(codes[i + 3]);
+            localB = GetIdx(codes[i + 5]);
+            break;
         }
 
-        //if (localR == -1 || localG == -1 || localB == -1)
-            //Plugin.Instance?.Log.LogError("[XpWispDrawTranspiler] FAILED to find R/G/B locals — no injections will occur. Check the IL dump above for actual Ldc_R4 values.");
-
-        //var injectionCount = 0;
         foreach (var instr in codes)
         {
             yield return instr;
@@ -165,14 +140,10 @@ internal static class DroppedSalt
 
             if (component == -1) continue;
 
-            //injectionCount++;
-            //Plugin.Instance?.Log.LogInfo($"[XpWispDrawTranspiler] Injecting for component={component} (injection #{injectionCount})");
             yield return new CodeInstruction(OpCodes.Ldarg_1); // Particle p
             yield return new CodeInstruction(OpCodes.Ldc_I4, component);
             yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(DroppedSalt), nameof(GetCorrectedColor)));
         }
-
-        //Plugin.Instance?.Log.LogInfo($"[XpWispDrawTranspiler] Done. Total injections: {injectionCount}");
     }
 
     private static int GetIdx(CodeInstruction instr)

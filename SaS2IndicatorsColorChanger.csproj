@@ -4,8 +4,8 @@
     <TargetFramework>net452</TargetFramework>
     <AssemblyName>amione.SaS2IndicatorsColorChanger</AssemblyName>
     <Product>SaS2IndicatorsColorChanger</Product>
-    <ProductDescription>pt.rs BepInEx Plugin Template!</ProductDescription>
-    <Version>1.0.4</Version>
+    <ProductDescription>Makes the player indicator and salt drop in Salt and Sacrifice configurable</ProductDescription>
+    <Version>1.0.5</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>

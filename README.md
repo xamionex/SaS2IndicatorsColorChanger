@@ -1,5 +1,5 @@
 # SaS2IndicatorsColorChanger
 
-I didn't like the fact that player 1 had blue marker instead of red, so I made a mod that makes it configurable.
+Makes the player indicator and salt drop in Salt and Sacrifice configurable, configurable in-game using [Mod Options](https://www.nexusmods.com/saltandsacrifice/mods/40)
 
 Made with https://github.com/xamionex/SaltAndSacrificeBepInExTemplate
