@@ -22,7 +22,8 @@ internal class PlayerMarker
     static PlayerMarker()
     {
         GetCharacterMethod = typeof(Player).GetMethod("GetCharacter", BindingFlags.NonPublic | BindingFlags.Instance);
-        GetMainPlayerMethod = typeof(PlayerMgr).GetMethod("GetMainPlayer", BindingFlags.NonPublic | BindingFlags.Static);
+        GetMainPlayerMethod =
+            typeof(PlayerMgr).GetMethod("GetMainPlayer", BindingFlags.NonPublic | BindingFlags.Static);
     }
 
     private static Character GetCharacter(Player player)

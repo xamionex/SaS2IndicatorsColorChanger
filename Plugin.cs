@@ -17,7 +17,7 @@ namespace SaS2IndicatorsColorChanger;
 public class Plugin : BasePlugin
 {
     // Static properties to hold marker colors (readable from other classes)
-    public static Color MainPlayerMarkerColor { get; private set; } = new(1f, 0.5f, 0.4f, 1f);   // default orange
+    public static Color MainPlayerMarkerColor { get; private set; } = new(1f, 0.5f, 0.4f, 1f); // default orange
     public static Color CoopPlayerMarkerColor { get; private set; } = new(0.4f, 0.5f, 1f, 1f); // default blue
 
     private ConfigEntry<string> _mainPlayerColorConfig;
@@ -25,6 +25,7 @@ public class Plugin : BasePlugin
 
     private FileSystemWatcher _configWatcher;
     private Timer _debounceTimer;
+
     // ReSharper disable once MemberCanBePrivate.Global
     public static Plugin Instance;
 
@@ -51,7 +52,7 @@ public class Plugin : BasePlugin
 
         // Initial parse
         UpdateColorsFromConfig();
-        
+
         var modOptionsType = Type.GetType("SaS2ModOptions.SaS2ModOptions, amione.SaS2ModOptions");
         if (modOptionsType != null)
         {
@@ -120,7 +121,8 @@ public class Plugin : BasePlugin
         }
         else
         {
-            Log.LogWarning($"Failed to parse MainPlayerMarkerColor config value '{_mainPlayerColorConfig.Value}'. Keeping previous color.");
+            Log.LogWarning(
+                $"Failed to parse MainPlayerMarkerColor config value '{_mainPlayerColorConfig.Value}'. Keeping previous color.");
         }
 
         // Parse coop player color
@@ -136,17 +138,20 @@ public class Plugin : BasePlugin
         }
         else
         {
-            Log.LogWarning($"Failed to parse CoopPlayerMarkerColor config value '{_coopPlayerColorConfig.Value}'. Keeping previous color.");
+            Log.LogWarning(
+                $"Failed to parse CoopPlayerMarkerColor config value '{_coopPlayerColorConfig.Value}'. Keeping previous color.");
         }
     }
-    
+
     [MethodImpl(MethodImplOptions.NoInlining)]
     private void TryRegisterModOptions()
     {
         // ReSharper disable RedundantAssignment
         var order = 0;
-        SaS2ModOptions.SaS2ModOptions.RegisterConfig(_mainPlayerColorConfig, "Indicators", "Main Player (RGBA String)", order += 1);
-        SaS2ModOptions.SaS2ModOptions.RegisterConfig(_coopPlayerColorConfig, "Indicators", "Cooperator (RGBA String)", order += 1);
+        SaS2ModOptions.SaS2ModOptions.RegisterConfig(_mainPlayerColorConfig, "Indicators", "Main Player (RGBA String)",
+            order += 1);
+        SaS2ModOptions.SaS2ModOptions.RegisterConfig(_coopPlayerColorConfig, "Indicators", "Cooperator (RGBA String)",
+            order += 1);
         // ReSharper restore RedundantAssignment
     }
 
