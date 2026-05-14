@@ -13,7 +13,7 @@
       https://nuget.bepinex.dev/v3/index.json;
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
-    <RootNamespace>SaS2IndicatorsColorChanger</RootNamespace>
+    <RootNamespace>$(Product)</RootNamespace>
     <DebugType>embedded</DebugType>
   </PropertyGroup>
 
@@ -23,45 +23,45 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  
+
   <ItemGroup>
-    <Reference Include="lib\*.dll" Private="False" />
-    <Reference Include="lib\*.exe" Private="False" />
+    <Reference Include="lib\*.dll" Private="False"/>
+    <Reference Include="lib\*.exe" Private="False"/>
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="SaS2IndicatorsColorChanger\manifest.json" />
+    <None Remove="$(RootNamespace)\manifest.json"/>
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <ItemGroup>
-      <PluginInfoLines Include="internal static class PluginInfo {" />
-      <PluginInfoLines Include="    public const string PluginGuid = &quot;$(AssemblyName)&quot;%3B" />
-      <PluginInfoLines Include="    public const string PluginName = &quot;$(Product)&quot;%3B" />
-      <PluginInfoLines Include="    public const string PluginVersion = &quot;$(Version)&quot;%3B" />
-      <PluginInfoLines Include="}" />
+      <PluginInfoLines Include="internal static class PluginInfo {"/>
+      <PluginInfoLines Include="    public const string PluginGuid = &quot;$(AssemblyName)&quot;%3B"/>
+      <PluginInfoLines Include="    public const string PluginName = &quot;$(Product)&quot;%3B"/>
+      <PluginInfoLines Include="    public const string PluginVersion = &quot;$(Version)&quot;%3B"/>
+      <PluginInfoLines Include="}"/>
     </ItemGroup>
-    <WriteLinesToFile File="$(ProjectDir)PluginInfo.cs" Lines="@(PluginInfoLines)" Overwrite="true" />
+    <WriteLinesToFile File="$(ProjectDir)PluginInfo.cs" Lines="@(PluginInfoLines)" Overwrite="true"/>
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <ItemGroup>
-      <BuildFiles Include="$(Outdir)\*" />
+      <BuildFiles Include="$(Outdir)\*"/>
     </ItemGroup>
-    <Copy SourceFiles="@(BuildFiles)" DestinationFolder="$(ProjectDir)$(RootNamespace)\plugins" />
+    <Copy SourceFiles="@(BuildFiles)" DestinationFolder="$(ProjectDir)$(RootNamespace)\plugins"/>
   </Target>
 
   <UsingTask TaskName="RegexReplaceTask" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" TaskFactory="RoslynCodeTaskFactory">
     <ParameterGroup>
-      <InputFile />
-      <VersionValue Required="true" />
-      <AssemblyName Required="true" />
-      <ProductDescription Required="true" />
-      <Product Required="true" />
+      <InputFile/>
+      <VersionValue Required="true"/>
+      <AssemblyName Required="true"/>
+      <ProductDescription Required="true"/>
+      <Product Required="true"/>
     </ParameterGroup>
     <Task>
-      <Using Namespace="System.IO" />
-      <Using Namespace="System.Text.RegularExpressions" />
+      <Using Namespace="System.IO"/>
+      <Using Namespace="System.Text.RegularExpressions"/>
       <Code Type="Fragment" Language="cs">
         <![CDATA[
           string content = File.ReadAllText(InputFile);
@@ -90,12 +90,14 @@
             VersionValue="$(Version)"
             AssemblyName="$(AssemblyName)"
             ProductDescription="$(ProductDescription)"
-            Product="$(Product)" />
+            Product="$(Product)"/>
   </Target>
 
   <Target Name="ZipProjectDirectory" AfterTargets="Build">
-    <Exec Command="cd $(RootNamespace)/plugins &amp;&amp; zip ../../$(RootNamespace).zip amione.SaS2IndicatorsColorChanger.dll" Condition="'$(OS)' == 'Unix'" />
-    <Exec Command="powershell -Command &quot;Compress-Archive -Path '$(ProjectDir)$(RootNamespace)\plugins\amione.SaS2IndicatorsColorChanger.dll' -DestinationPath '$(ProjectDir)$(RootNamespace).zip' -Force&quot;" Condition="'$(OS)' == 'Windows_NT'" />
+    <Exec Command="cd $(RootNamespace)/plugins &amp;&amp; rm -f ../../$(RootNamespace).zip &amp;&amp; zip ../../$(RootNamespace).zip $(AssemblyName).dll"
+          Condition="'$(OS)' == 'Unix'" />
+    <Exec Command="powershell -Command &quot;Remove-Item -Force '$(ProjectDir)$(RootNamespace).zip' -ErrorAction SilentlyContinue; Compress-Archive -Path '$(ProjectDir)$(RootNamespace)\plugins\$(AssemblyName).dll' -DestinationPath '$(ProjectDir)$(RootNamespace).zip'&quot;"
+          Condition="'$(OS)' == 'Windows_NT'" />
   </Target>
 
 
@@ -103,7 +105,7 @@
     <!-- Set variables for game game file and plugin source -->
     <PropertyGroup>
       <GameLocationFile>$(MSBuildProjectDirectory)/.gamelocation</GameLocationFile>
-      <PluginSource>$(MSBuildProjectDirectory)/SaS2IndicatorsColorChanger/plugins/amione.SaS2IndicatorsColorChanger.dll</PluginSource>
+      <PluginSource>$(MSBuildProjectDirectory)/$(RootNamespace)/plugins/$(AssemblyName).dll</PluginSource>
     </PropertyGroup>
 
     <!-- Read .gamelocation file if exists -->
@@ -117,19 +119,19 @@
     </PropertyGroup>
 
     <!-- Warning if no valid path found -->
-    <Warning Condition="'$(GamePath)' == ''" Text="Skipping game folder copy: .gamelocation file not found or empty" />
+    <Warning Condition="'$(GamePath)' == ''" Text="Skipping game folder copy: .gamelocation file not found or empty"/>
 
     <!-- 🪟 Windows -->
     <Exec Condition="'$(OS)' == 'Windows_NT' And '$(GamePath)' != ''" Command='
     setlocal EnableDelayedExpansion &amp;&amp;
-    set "TargetPath=$(GamePath)\BepInEx\plugins\SaS2IndicatorsColorChanger" &amp;&amp;
+    set "TargetPath=$(GamePath)\BepInEx\plugins\$(RootNamespace)" &amp;&amp;
     if exist "!TargetPath!" rmdir /s /q "!TargetPath!" &amp;&amp;
     xcopy /s /e /y "$(PluginSource)" "!TargetPath!"
   '/>
 
     <!-- 🐧 Linux/macOS -->
     <Exec Condition="'$(OS)' != 'Windows_NT' And '$(GamePath)' != ''" Command='
-    TargetPath="$(GamePath)/BepInEx/plugins/SaS2IndicatorsColorChanger" &amp;&amp;
+    TargetPath="$(GamePath)/BepInEx/plugins/$(RootNamespace)" &amp;&amp;
     rm -rf "$TargetPath" &amp;&amp;
     mkdir -p "$TargetPath" &amp;&amp;
     cp -r "$(PluginSource)" "$TargetPath"

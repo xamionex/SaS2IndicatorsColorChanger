@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Timers;
 using BepInEx;
+using BepInEx.NET.Common;
 using BepInEx.Configuration;
 using Common;
 using HarmonyLib;
@@ -13,7 +14,7 @@ namespace SaS2IndicatorsColorChanger;
 // ReSharper disable once StringLiteralTypo
 [BepInDependency("amione.SaS2ModOptions", BepInDependency.DependencyFlags.SoftDependency)]
 // ReSharper disable once ClassNeverInstantiated.Global
-public class Plugin : BepInEx.NetLauncher.Common.BasePlugin
+public class Plugin : BasePlugin
 {
     // Static properties to hold marker colors (readable from other classes)
     public static Color MainPlayerMarkerColor { get; private set; } = new(1f, 0.5f, 0.4f, 1f);   // default orange
